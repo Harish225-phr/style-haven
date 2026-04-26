@@ -1,4 +1,11 @@
-import { Instagram, Facebook, Youtube, Mail, Phone, MapPin } from "lucide-react";
+import { InstagramIcon, FacebookIcon, YoutubeIcon, MailIcon, PhoneIcon, MapPinIcon } from "lucide-react";
+
+const Instagram = InstagramIcon;
+const Facebook = FacebookIcon;
+const Youtube = YoutubeIcon;
+const Mail = MailIcon;
+const Phone = PhoneIcon;
+const MapPin = MapPinIcon;
 
 export function Footer() {
   return (
