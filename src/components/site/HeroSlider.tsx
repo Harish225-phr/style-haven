@@ -204,16 +204,23 @@ export function HeroSlider() {
           >
             <ChevronRight className="h-4 w-4" />
           </button>
-          <div className="ml-4 flex items-center gap-2">
+          <div className="ml-4 flex items-center gap-1">
             {slides.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setI(idx)}
                 aria-label={`Go to slide ${idx + 1}`}
-                className={`h-[2px] transition-all duration-500 ${
-                  idx === i ? "w-10 bg-primary-foreground" : "w-5 bg-primary-foreground/40"
-                }`}
-              />
+                aria-current={idx === i}
+                className="group h-11 flex items-center justify-center px-1"
+              >
+                <span
+                  className={`block h-[2px] transition-all duration-500 ${
+                    idx === i
+                      ? "w-10 bg-primary-foreground"
+                      : "w-5 bg-primary-foreground/40 group-hover:bg-primary-foreground/70"
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </div>
