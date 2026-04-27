@@ -173,6 +173,92 @@
     animation: var(--animate-marquee);
     white-space: nowrap;
   }
+
+  /* ===== 3D Perspective utilities ===== */
+  .perspective-1000 { perspective: 1000px; }
+  .perspective-1500 { perspective: 1500px; }
+  .preserve-3d { transform-style: preserve-3d; }
+  .backface-hidden { backface-visibility: hidden; }
+
+  /* Tilt card on hover */
+  .tilt-card {
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.6s ease;
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+  .tilt-card:hover {
+    transform: rotateX(6deg) rotateY(-8deg) translateY(-8px) scale(1.02);
+    box-shadow:
+      0 30px 60px -20px color-mix(in oklab, var(--foreground) 35%, transparent),
+      0 18px 30px -15px color-mix(in oklab, var(--foreground) 20%, transparent);
+  }
+  .tilt-card-inner { transform: translateZ(40px); }
+
+  /* Glow accent */
+  .glow-blush {
+    box-shadow: 0 0 0 1px color-mix(in oklab, var(--blush) 40%, transparent),
+      0 20px 60px -10px color-mix(in oklab, var(--blush) 60%, transparent);
+  }
+
+  /* Shimmer for skeleton/badges */
+  .shimmer {
+    background: linear-gradient(
+      110deg,
+      transparent 30%,
+      color-mix(in oklab, var(--blush) 35%, transparent) 50%,
+      transparent 70%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 2.4s linear infinite;
+  }
+
+  /* Floating animation */
+  .float-y { animation: float-y 6s ease-in-out infinite; }
+  .float-y-slow { animation: float-y 9s ease-in-out infinite; }
+
+  /* Spinning ring */
+  .spin-slow { animation: spin-slow 28s linear infinite; }
+
+  /* Marquee variants */
+  .marquee-3d {
+    display: flex;
+    gap: 3rem;
+    animation: marquee 30s linear infinite;
+    white-space: nowrap;
+  }
+  .marquee-rev {
+    display: flex;
+    gap: 3rem;
+    animation: marquee-rev 36s linear infinite;
+    white-space: nowrap;
+  }
+
+  /* Stylish text-stroke for huge display words */
+  .text-stroke {
+    -webkit-text-stroke: 1.5px currentColor;
+    color: transparent;
+  }
+
+  /* Glass card */
+  .glass {
+    background: color-mix(in oklab, var(--background) 55%, transparent);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid color-mix(in oklab, var(--foreground) 8%, transparent);
+  }
+
+  /* Slider fade */
+  .slider-fade > * {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 1.1s ease, transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    transform: scale(1.06);
+  }
+  .slider-fade > .is-active {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 @keyframes fade-in {
@@ -186,4 +272,19 @@
 @keyframes marquee {
   from { transform: translateX(0); }
   to   { transform: translateX(-50%); }
+}
+@keyframes marquee-rev {
+  from { transform: translateX(-50%); }
+  to   { transform: translateX(0); }
+}
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to   { background-position: -200% 0; }
+}
+@keyframes float-y {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-14px); }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
 }
