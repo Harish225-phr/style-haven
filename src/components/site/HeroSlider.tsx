@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import { useTouchOrReducedMotion } from "@/hooks/use-touch-device";
 import s1 from "@/assets/slide-1.jpg";
 import s2 from "@/assets/slide-2.jpg";
 import s3 from "@/assets/slide-3.jpg";
@@ -37,18 +38,44 @@ const slides = [
 
 export function HeroSlider() {
   const [i, setI] = useState(0);
+  const [paused, setPaused] = useState(false);
   const total = slides.length;
+  const reduced = useTouchOrReducedMotion();
+  const touchX = useRef<number | null>(null);
 
   useEffect(() => {
+    if (paused) return;
     const id = setInterval(() => setI((v) => (v + 1) % total), 6500);
     return () => clearInterval(id);
-  }, [total]);
+  }, [total, paused]);
 
   const go = (dir: number) => setI((v) => (v + dir + total) % total);
 
+  // Swipe handlers for touch
+  const onTouchStart = (e: React.TouchEvent) => {
+    setPaused(true);
+    touchX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchX.current;
+    if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+    touchX.current = null;
+    // Resume autoplay shortly after interaction
+    setTimeout(() => setPaused(false), 4000);
+  };
+
   return (
-    <section id="top" className="relative w-full overflow-hidden bg-beige perspective-1500">
-      <div className="relative h-[92vh] min-h-[640px] max-h-[920px] w-full">
+    <section
+      id="top"
+      className="relative w-full overflow-hidden bg-beige md:perspective-1500"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
+      aria-roledescription="carousel"
+    >
+      <div className="relative h-[80vh] min-h-[520px] max-h-[920px] md:h-[92vh] md:min-h-[640px] w-full">
         {/* Slides */}
         <div className="absolute inset-0">
           <AnimatePresence mode="sync">
@@ -57,11 +84,30 @@ export function HeroSlider() {
                 idx === i && (
                   <motion.div
                     key={idx}
-                    initial={{ opacity: 0, scale: 1.08, rotateY: 8 }}
-                    animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-                    exit={{ opacity: 0, scale: 1.04, rotateY: -6 }}
-                    transition={{ duration: 1.4, ease: [0.22, 1, 0.36, 1] }}
-                    className="absolute inset-0 preserve-3d"
+                    initial={
+                      reduced
+                        ? { opacity: 0 }
+                        : { opacity: 0, scale: 1.08, rotateY: 8 }
+                    }
+                    animate={
+                      reduced
+                        ? { opacity: 1 }
+                        : { opacity: 1, scale: 1, rotateY: 0 }
+                    }
+                    exit={
+                      reduced
+                        ? { opacity: 0 }
+                        : { opacity: 0, scale: 1.04, rotateY: -6 }
+                    }
+                    transition={{
+                      duration: reduced ? 0.6 : 1.4,
+                      ease: [0.22, 1, 0.36, 1],
+                    }}
+                    className="absolute inset-0 md:preserve-3d"
+                    aria-hidden={idx !== i}
+                    role="group"
+                    aria-roledescription="slide"
+                    aria-label={`${idx + 1} of ${total}`}
                   >
                     <img
                       src={s.img}
@@ -158,16 +204,23 @@ export function HeroSlider() {
           >
             <ChevronRight className="h-4 w-4" />
           </button>
-          <div className="ml-4 flex items-center gap-2">
+          <div className="ml-4 flex items-center gap-1">
             {slides.map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setI(idx)}
                 aria-label={`Go to slide ${idx + 1}`}
-                className={`h-[2px] transition-all duration-500 ${
-                  idx === i ? "w-10 bg-primary-foreground" : "w-5 bg-primary-foreground/40"
-                }`}
-              />
+                aria-current={idx === i}
+                className="group h-11 flex items-center justify-center px-1"
+              >
+                <span
+                  className={`block h-[2px] transition-all duration-500 ${
+                    idx === i
+                      ? "w-10 bg-primary-foreground"
+                      : "w-5 bg-primary-foreground/40 group-hover:bg-primary-foreground/70"
+                  }`}
+                />
+              </button>
             ))}
           </div>
         </div>
