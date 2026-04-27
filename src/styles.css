@@ -180,19 +180,36 @@
   .preserve-3d { transform-style: preserve-3d; }
   .backface-hidden { backface-visibility: hidden; }
 
-  /* Tilt card on hover */
+  /* Tilt card — 3D only for fine pointers (mouse). Touch gets gentle tap feedback. */
   .tilt-card {
-    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.6s ease;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
     transform-style: preserve-3d;
-    will-change: transform;
   }
-  .tilt-card:hover {
-    transform: rotateX(6deg) rotateY(-8deg) translateY(-8px) scale(1.02);
-    box-shadow:
-      0 30px 60px -20px color-mix(in oklab, var(--foreground) 35%, transparent),
-      0 18px 30px -15px color-mix(in oklab, var(--foreground) 20%, transparent);
+  @media (hover: hover) and (pointer: fine) {
+    .tilt-card { will-change: transform; }
+    .tilt-card:hover {
+      transform: rotateX(6deg) rotateY(-8deg) translateY(-8px) scale(1.02);
+      box-shadow:
+        0 30px 60px -20px color-mix(in oklab, var(--foreground) 35%, transparent),
+        0 18px 30px -15px color-mix(in oklab, var(--foreground) 20%, transparent);
+    }
+    .tilt-card-inner { transform: translateZ(40px); }
   }
-  .tilt-card-inner { transform: translateZ(40px); }
+  @media (hover: none) {
+    .tilt-card:active {
+      transform: scale(0.98);
+      transition: transform 0.2s ease;
+    }
+    /* Reveal hover-only overlays so touch users can see actions */
+    .tilt-card .group-hover\:opacity-100,
+    .group:focus-within .group-hover\:opacity-100 {
+      opacity: 1 !important;
+    }
+    .tilt-card .group-hover\:translate-y-0,
+    .group:focus-within .group-hover\:translate-y-0 {
+      transform: translateY(0) !important;
+    }
+  }
 
   /* Glow accent */
   .glow-blush {
@@ -218,6 +235,27 @@
 
   /* Spinning ring */
   .spin-slow { animation: spin-slow 28s linear infinite; }
+
+  /* Tap-friendly minimum target on touch */
+  @media (hover: none) {
+    .tap-target { min-height: 44px; min-width: 44px; }
+  }
+
+  /* Respect user's reduced-motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
+    .tilt-card:hover {
+      transform: none !important;
+      box-shadow: none !important;
+    }
+  }
 
   /* Marquee variants */
   .marquee-3d {
