@@ -1,14 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Announcement } from "@/components/site/Announcement";
 import { Navbar } from "@/components/site/Navbar";
-import { Hero } from "@/components/site/Hero";
+import { HeroSlider } from "@/components/site/HeroSlider";
+import { BrandStrip } from "@/components/site/BrandStrip";
 import { Categories } from "@/components/site/Categories";
+import { Trending3D } from "@/components/site/Trending3D";
+import { MarqueeBand } from "@/components/site/MarqueeBand";
 import { Products } from "@/components/site/Products";
 import { Featured } from "@/components/site/Featured";
+import { Stats } from "@/components/site/Stats";
 import { WhyUs } from "@/components/site/WhyUs";
 import { Lookbook } from "@/components/site/Lookbook";
 import { Offers } from "@/components/site/Offers";
 import { Testimonials } from "@/components/site/Testimonials";
+import { Instagram3D } from "@/components/site/Instagram3D";
 import { Newsletter } from "@/components/site/Newsletter";
 import { Footer } from "@/components/site/Footer";
 
@@ -34,17 +39,22 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-background text-foreground overflow-x-hidden">
       <Announcement />
       <Navbar />
-      <Hero />
+      <HeroSlider />
+      <BrandStrip />
       <Categories />
+      <Trending3D />
+      <MarqueeBand />
       <Products />
       <Featured />
+      <Stats />
       <WhyUs />
       <Lookbook />
       <Offers />
       <Testimonials />
+      <Instagram3D />
       <Newsletter />
       <Footer />
     </main>
